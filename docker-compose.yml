@@ -1,0 +1,55 @@
+services:
+  python-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agentic-design-patterns-dev
+    volumes:
+      # Mount the entire project directory for live development
+      - .:/workspace
+      # Mount Python cache directory for better performance
+      - python-cache:/root/.cache/pip
+      # Mount VS Code settings if using dev containers
+      - ~/.vscode:/root/.vscode:ro
+    working_dir: /workspace
+    environment:
+      - PYTHONPATH=/workspace
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    ports:
+      # Port for debugging (can be changed per project)
+      - "5678:5678"
+      # Port for web applications (if any)
+      - "8000:8000"
+      # Port for Jupyter notebooks (if needed)
+      - "8888:8888"
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null  # Keep container running
+    networks:
+      - dev-network
+
+  # Optional: Add a database service for projects that need it
+  postgres:
+    image: postgres:15-alpine
+    container_name: agentic-design-patterns-db
+    environment:
+      POSTGRES_DB: agentic_patterns
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - dev-network
+    profiles:
+      - database  # Only start when explicitly requested
+
+volumes:
+  python-cache:
+  postgres-data:
+
+networks:
+  dev-network:
+    driver: bridge

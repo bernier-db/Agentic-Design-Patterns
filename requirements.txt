@@ -1,0 +1,27 @@
+# Core dependencies for all projects
+# Add project-specific dependencies here
+
+# Common utilities
+requests>=2.31.0
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# Data processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Async support
+aiohttp>=3.8.0
+asyncio-throttle>=1.0.0
+
+# CLI tools
+click>=8.1.0
+rich>=13.0.0
+
+# Logging
+structlog>=23.0.0
+
+langchain 
+langchain-community 
+langchain-openai 
+langgraph
