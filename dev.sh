@@ -133,6 +133,12 @@ run() {
             return 1
         fi
         
+        # Check for requirements.txt and install dependencies if it exists
+        if [ -f "$project_dir/requirements.txt" ]; then
+            print_status "Installing dependencies from requirements.txt..."
+            run_command "docker-compose -f '$COMPOSE_FILE' exec -w '$container_project_dir' python-dev pip install -r requirements.txt"
+        fi
+        
         print_status "Running project: $project_path"
         run_command "docker-compose -f '$COMPOSE_FILE' exec -w '$container_project_dir' python-dev python $main_file" false
     fi
