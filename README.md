@@ -1,10 +1,11 @@
 # Agentic Design Patterns
 
-A multi-project repository for exploring and implementing agentic design patterns using Python.
+A multi-project repository for exploring and implementing agentic design patterns using Python. \
+These design patterns come from the book (Agentic Design Patterns: A Hands-On Guide to Building Intelligent Systems)[https://www.amazon.ca/Agentic-Design-Patterns-Hands-Intelligent/dp/3032014018] by Antonio Gull
+
 
 ## Development Environment
-
-This repository includes a comprehensive Docker-based development environment that makes it easy to develop, run, and debug Python projects in containers.
+You can use docker to run and setup the project, or directly run it on your machine.
 
 ### Quick Start
 
@@ -221,16 +222,3 @@ The following environment variables are set in the container:
 3. **Dependencies not found**: Make sure to rebuild the container after changing requirements files
 4. **Debugger not connecting**: Ensure port 5678 is not blocked by firewall
 5. **Script not executable**: Run `chmod +x dev.sh` if you get permission errors
-
-### Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
-
-Quick start:
-1. Create a new directory under `projects/` for your pattern
-2. Add a `main.py`, `run.py`, or `app.py` file
-3. Add tests in a `tests/` directory
-4. Create a `README.md` documenting your pattern
-5. Follow the project structure and coding standards
-
-For package management, see [PACKAGE_MANAGEMENT.md](PACKAGE_MANAGEMENT.md).
