@@ -1,0 +1,8 @@
+# Project-specific requirements for Prompt Chaining
+# These are in addition to the global requirements
+
+# LangChain packages
+langchain>=0.1.0
+langchain-openai>=0.1.0
+langchain-core>=0.1.0
+python-dotenv>=1.0.0
