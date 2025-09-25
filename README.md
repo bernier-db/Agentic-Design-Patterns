@@ -1,7 +1,7 @@
 # Agentic Design Patterns
 
 A multi-project repository for exploring and implementing agentic design patterns using Python. \
-These design patterns come from the book (Agentic Design Patterns: A Hands-On Guide to Building Intelligent Systems)[https://www.amazon.ca/Agentic-Design-Patterns-Hands-Intelligent/dp/3032014018] by Antonio Gull
+These design patterns come from the book (Agentic Design Patterns: A Hands-On Guide to Building Intelligent Systems)[https://www.amazon.ca/Agentic-Design-Patterns-Hands-Intelligent/dp/3032014018] by Antonio Gulli
 
 
 ## Development Environment
