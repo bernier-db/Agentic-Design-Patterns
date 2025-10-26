@@ -1,0 +1,7 @@
+{
+    "makefile.configureOnOpen": false,
+    "editor.snippetSuggestions": "top",
+    "python.analysis.diagnosticSeverityOverrides": {
+            "reportPrivateUsage": "error"
+        }
+}
