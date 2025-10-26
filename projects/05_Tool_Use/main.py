@@ -6,7 +6,12 @@ This workflow demonstrates the Tool Use agentic design pattern using langchain.
 
 import json
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage, BaseMessage
+from langchain_core.messages import (
+    SystemMessage,
+    HumanMessage,
+    ToolMessage,
+    BaseMessage,
+)
 from dotenv import load_dotenv
 from tools import search_database
 
@@ -46,11 +51,13 @@ class ToolUseWorkflow:
         """Start the conversation."""
         self._conversation_messages.append(
             SystemMessage(
-                content="You are an assistant that can search a database of books.")
+                content="You are an assistant that can search a database of books."
+            )
         )
         self._conversation_messages.append(
             HumanMessage(
-                content="How many copies of the book 'The Great Gatsby' are in the database?")
+                content="How many copies of the book 'The Great Gatsby' are in the database?"
+            )
         )
         result = self.llm.invoke(self._conversation_messages)
         self._conversation_messages.append(result)
@@ -63,14 +70,15 @@ class ToolUseWorkflow:
 
     def _handle_tool_call(self, tool_call: dict):
         """Handle a tool call."""
-        tool_name = tool_call['name']
-        tool_args = tool_call['args']
-        if tool_name == 'search_database':
+        tool_name = tool_call["name"]
+        tool_args = tool_call["args"]
+        if tool_name == "search_database":
             tool_result = search_database.invoke(tool_args)
-            self._conversation_messages.append(ToolMessage(
-                content=json.dumps(tool_result),
-                tool_call_id=tool_call['id']
-            ))
+            self._conversation_messages.append(
+                ToolMessage(
+                    content=json.dumps(tool_result), tool_call_id=tool_call["id"]
+                )
+            )
             print(f"Tool result: {tool_result}")
         else:
             print(f"Unknown tool: {tool_name}")

@@ -7,7 +7,7 @@ from langchain_core.tools import tool as langchain_tool
 @langchain_tool
 def search_database(query: str) -> list[dict[str, str | int]]:
     """Fake tool that would search a database of books using the query
-    
+
     Args:
         query: The query to search the database for
     Returns:
@@ -25,16 +25,13 @@ def search_database(query: str) -> list[dict[str, str | int]]:
     ]
 
     def matches_query(book: dict[str, str | int]) -> bool:
-        title = cast(str, book.get('title', ''))
-        author = cast(str, book.get('author', ''))
+        title = cast(str, book.get("title", ""))
+        author = cast(str, book.get("author", ""))
         query_lower = query.lower()
         return query_lower in title.lower() or query_lower in author.lower()
 
     filtered_results: list[dict[str, str | int]] = [
-        cast(dict[str, str | int], book)
-        for book in fake_results
-        if matches_query(book)
+        cast(dict[str, str | int], book) for book in fake_results if matches_query(book)
     ]
 
     return filtered_results
-
