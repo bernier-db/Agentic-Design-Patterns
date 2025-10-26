@@ -6,80 +6,74 @@ This workflow demonstrates the Tool Use agentic design pattern using langchain.
 
 import json
 from langchain_openai import ChatOpenAI
-from langchain_core.tools import tool as langchain_tool
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage, BaseMessage
 from dotenv import load_dotenv
+from tools import search_database
 
 load_dotenv()
 
+
 class ToolUseWorkflow:
     """Tool Use Workflow"""
-    
-    _messages = []
+
+    _conversation_messages: list[BaseMessage] = []
 
     def __init__(self):
         """Initialize the workflow with LLM configuration."""
         try:
             self.llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
+            self.llm = self.llm.bind_tools([search_database])
         except Exception as e:
             print(f"Error initializing LLM: {e}")
             exit(1)
 
     def run(self):
         """Run the workflow."""
-        print("🔗 Tool Use Workflow")
-        prompt = self.define_agent_prompt()
-        llm_with_tools = self.llm.bind_tools([self.search_database])
-        result = (prompt | llm_with_tools).invoke({"input": "What are the books about the Great Gatsby?"})
-        self._messages.append(result)
+        print("--- Running Tool Use Workflow ---\n")
 
-        for tool_call in result.tool_calls:
-            # View tool calls made by the model
-            print(f"Tool: {tool_call['name']}")
-            print(f"Args: {tool_call['args']}")
-            if tool_call['name'] == 'search_database':
-                result = self.search_database(tool_call['args']['query'])
-                self._messages.append(("tool", {
-                    "name": tool_call['name'],
-                    "args": tool_call['args'],
-                    "result": result
-                }))
-                print(f"Result: {result}")
+        result = self._start_conversation()
 
-        final_response = llm_with_tools.invoke(self._messages)
+        self._handle_tools_calls(result.tool_calls)
+
+        final_response_message = self.llm.invoke(self._conversation_messages)
+
+        final_response = final_response_message.content
 
         print(f"{'-' * 10} Workflow completed {'-' * 10}")
         print(f"Result: {final_response}")
 
-    def define_agent_prompt(self):
-        """Define the agent."""
-        self._messages.append(("system", "You are a helpful assistant that can search a database of books."))
-        self._messages.append(("user", "{input}"))
-        return ChatPromptTemplate.from_messages(self._messages)
+    def _start_conversation(self):
+        """Start the conversation."""
+        self._conversation_messages.append(
+            SystemMessage(
+                content="You are an assistant that can search a database of books.")
+        )
+        self._conversation_messages.append(
+            HumanMessage(
+                content="How many copies of the book 'The Great Gatsby' are in the database?")
+        )
+        result = self.llm.invoke(self._conversation_messages)
+        self._conversation_messages.append(result)
+        return result
 
-    @langchain_tool
-    def search_database(self, query: str) -> str:
-        # Docstring and type hints are important for the agent to understand the tool properly
-        """
-        Fake tool that would search a database of books using the query
-        Args:
-            query: The query to search the database for
-        Returns:
-            A list of dictionaries with the title and author of the books.
-            Properties:
-                title: The title of the book
-                author: The author of the book
-        """
+    def _handle_tools_calls(self, tool_calls: list[dict]):
+        """Handle tool calls."""
+        for tool_call in tool_calls:
+            self._handle_tool_call(tool_call)
 
-        print(f"{'-' * 10} Tool called - Searching database for: {query} {'-' * 10}")
-        fake_results = [
-            {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald"},
-            {"title": "1984", "author": "George Orwell"},
-            {"title": "To Kill a Mockingbird", "author": "Harper Lee"},
-        ]
-        return json.dumps(fake_results)
-
+    def _handle_tool_call(self, tool_call: dict):
+        """Handle a tool call."""
+        tool_name = tool_call['name']
+        tool_args = tool_call['args']
+        if tool_name == 'search_database':
+            tool_result = search_database.invoke(tool_args)
+            self._conversation_messages.append(ToolMessage(
+                content=json.dumps(tool_result),
+                tool_call_id=tool_call['id']
+            ))
+            print(f"Tool result: {tool_result}")
+        else:
+            print(f"Unknown tool: {tool_name}")
 
 
 if __name__ == "__main__":
